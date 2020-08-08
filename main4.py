@@ -1,4 +1,3 @@
-
 import pygame, sys, random
 
 # khoi tao pygame
@@ -8,7 +7,8 @@ pygame.init()
 WIDTH, HEIGHT = 400, 600
 clock = pygame.time.Clock()
 gravity = 0.25
-game_active = True
+# Trang thai cua game
+game_active = False
 
 
 # bien FPS
@@ -32,8 +32,8 @@ bird_rect = bird_surface.get_rect(center = (110, 200))
 bird_movement = 0
 
 # Ong
-pipe_serface = pygame.image.load('img/pipe-green.png').convert()
-# pipe_serface = pygame.transform.scale2x(pipe_serface)
+pipe_surface = pygame.image.load('img/pipe-green.png').convert()
+# pipe_surface = pygame.transform.scale2x(pipe_serface)
 pipe_list = []
 XuatHien = pygame.USEREVENT
 pygame.time.set_timer(XuatHien,1200)
@@ -42,9 +42,9 @@ def creat_newpipe():
 
     pipe_height = [300, 200, 320]
     random_height = random.choice(pipe_height)
-    bottom_pipe = pipe_serface.get_rect(midtop = (400,random_height))
+    bottom_pipe = pipe_surface.get_rect(midtop = (400,random_height))
     # print(random_height, bottom_pipe.bottom)
-    top_pipe = pipe_serface.get_rect(midbottom=(400, random_height-150))
+    top_pipe = pipe_surface.get_rect(midbottom=(400, random_height-150))
     return  bottom_pipe, top_pipe
     # return  bottom_pipe
 def move_pipes(pipes):
@@ -56,9 +56,9 @@ def draw_pipes(pipes):
     for pipe in pipes:
         # print(pipe.bottom)
         if pipe.bottom > 400:
-            screen.blit(pipe_serface,pipe)
+            screen.blit(pipe_surface,pipe)
         else:
-            pipe_flip = pygame.transform.flip(pipe_serface,False,True)
+            pipe_flip = pygame.transform.flip(pipe_surface,False,True)
             screen.blit(pipe_flip, pipe)
 
 # kiem tra va cham
@@ -93,6 +93,10 @@ while True:
            if event.key == pygame.K_SPACE and game_active == False:
                 game_active = True
                 pipe_list.clear()
+                # Dat lai vi tri va toc do roi cho con chim
+                bird_rect = bird_surface.get_rect(center=(110, 200))
+                bird_movement = 0
+    
 
        if event.type == XuatHien:
            pipe_list.extend( creat_newpipe())
@@ -120,10 +124,6 @@ while True:
     # neu nhu thanh nen chay het ra ngoai canvas thi reset lai vi tri
     if (floor_x_pos < -500):
         floor_x_pos = 0
-
-
-
-
 
 
     # update

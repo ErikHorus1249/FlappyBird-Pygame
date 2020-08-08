@@ -31,8 +31,8 @@ bird_rect = bird_surface.get_rect(center = (110, 400))
 bird_movement = 0
 
 # Ong
-pipe_serface = pygame.image.load('img/pipe-green.png').convert()
-# pipe_serface = pygame.transform.scale2x(pipe_serface)
+pipe_surface = pygame.image.load('img/pipe-green.png').convert()
+# pipe_surface = pygame.transform.scale2x(pipe_surface)
 pipe_list = []
 XuatHien = pygame.USEREVENT
 pygame.time.set_timer(XuatHien,1200)
@@ -41,9 +41,9 @@ def creat_newpipe():
 
     pipe_height = [300, 200, 320]
     random_height = random.choice(pipe_height)
-    bottom_pipe = pipe_serface.get_rect(midtop = (400,random_height))
+    bottom_pipe = pipe_surface.get_rect(midtop = (400,random_height))
     # print(random_height, bottom_pipe.bottom)
-    top_pipe = pipe_serface.get_rect(midbottom=(400, random_height-150))
+    top_pipe = pipe_surface.get_rect(midbottom=(400, random_height-150))
     return  bottom_pipe, top_pipe
     # return  bottom_pipe
 def move_pipes(pipes):
@@ -56,9 +56,9 @@ def draw_pipes(pipes):
     for pipe in pipes:
         print(pipe.bottom) 
         if pipe.bottom > 400:
-            screen.blit(pipe_serface,pipe)
+            screen.blit(pipe_surface,pipe)
         else:
-            pipe_flip = pygame.transform.flip(pipe_serface,False,True)
+            pipe_flip = pygame.transform.flip(pipe_surface,False,True)
             screen.blit(pipe_flip, pipe)
 # chuyen dong nen dat
 def draw_floor():
