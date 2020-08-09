@@ -138,7 +138,7 @@ while True:
         # Thay doi gia tri y cua con chim
         bird_rect.centery += bird_movement
         screen.blit(rotated_bird, bird_rect)
-
+        # screen.blit(bird_surface, bird_rect)
         # ong
         pipe_list = move_pipes(pipe_list)
         draw_pipes(pipe_list)
