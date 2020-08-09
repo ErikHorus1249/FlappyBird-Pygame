@@ -1,83 +1,6 @@
 import pygame, sys, random
 
-# Ham tao ong nuoc moi
-def creat_newpipe():
-    pipe_height = [300, 200, 320]
-    random_height = random.choice(pipe_height)
-    bottom_pipe = pipe_surface.get_rect(midtop=(400, random_height))
-    # print(random_height, bottom_pipe.bottom)
-    top_pipe = pipe_surface.get_rect(midbottom=(400, random_height - 150))
-    return bottom_pipe, top_pipe
-    # return  bottom_pipe
 
-# Ham dich chuyen vi tri ong nuoc
-def move_pipes(pipes):
-    for pipe in pipes:
-        pipe.centerx -= 1
-    return pipes
-
-# Ham dung ve ra ong
-def draw_pipes(pipes):
-    for pipe in pipes:
-        # print(pipe.bottom)
-        if pipe.bottom > 400:
-            screen.blit(pipe_surface, pipe)
-        else:
-            pipe_flip = pygame.transform.flip(pipe_surface, False, True)
-            screen.blit(pipe_flip, pipe)
-
-
-# kiem tra va cham
-def check_collision(pipes):
-    for pipe in pipes:
-        if bird_rect.colliderect(pipe):
-            return False
-
-    if bird_rect.top <= 0 or bird_rect.bottom >= 500:
-        return False
-
-    return True
-
-# Ham xoay con chim
-def rotate_bird(bird):
-    new_bird = pygame.transform.rotozoom(bird, -bird_movement*6,1)
-    return  new_bird
-
-# Ham chuyen dong canh cua chim
-def bird_animation():
-    new_bird = bird_frames[bird_index]
-    new_bird_rect = new_bird.get_rect(center=(110,bird_rect.centery))
-    return  new_bird, new_bird_rect
-
-# chuyen dong nen dat
-def draw_floor():
-    screen.blit(floor_surface, (floor_x_pos, HEIGHT - 100))
-    screen.blit(floor_surface, (floor_x_pos + 300, HEIGHT - 100))
-
-# Ve con chim
-def draw_bird():
-    screen.blit(rotated_bird, bird_rect)
-
-# Hien thi diem
-def score_display(game_state):
-    if game_state == 'main_game':
-        score_surface = game_font.render(str(int(score)),True,(255,255,255))
-        score_rect = score_surface.get_rect(center=(200,50))
-        screen.blit(score_surface, score_rect)
-    elif game_state == 'game_over':
-        score_surface = game_font.render(f'Score : {int(score)}', True, (255, 255, 255))
-        score_rect = score_surface.get_rect(center=(200, 50))
-        screen.blit(score_surface, score_rect)
-
-        high_score_surface = game_font.render(f'Hight score : {int(high_score)}', True, (255, 255, 255))
-        high_score_rect = score_surface.get_rect(center=(155, 480))
-        screen.blit(high_score_surface, high_score_rect)
-
-# Cap nhat diem
-def update_score(score, high_score):
-    if score > high_score:
-        high_score = score
-    return high_score
 
 pygame.mixer.pre_init(frequency= 44100, size= 16, channels= 1, buffer= 512)
 # khoi tao pygame
@@ -145,6 +68,91 @@ game_over_rect = game_over_surface.get_rect(center=(200,250))
 
 # Am thanh
 flap_sound = pygame.mixer.Sound('audio/wing.wav')
+death_sound = pygame.mixer.Sound('audio/die.wav')
+score_sound = pygame.mixer.Sound('audio/point.wav')
+score_sound_countdown = 100
+
+# Ham tao ong nuoc moi
+def creat_newpipe():
+    pipe_height = [300, 200, 320]
+    random_height = random.choice(pipe_height)
+    bottom_pipe = pipe_surface.get_rect(midtop=(400, random_height))
+    # print(random_height, bottom_pipe.bottom)
+    top_pipe = pipe_surface.get_rect(midbottom=(400, random_height - 150))
+    return bottom_pipe, top_pipe
+    # return  bottom_pipe
+
+# Ham dich chuyen vi tri ong nuoc
+def move_pipes(pipes):
+    for pipe in pipes:
+        pipe.centerx -= 1
+    return pipes
+
+# Ham dung ve ra ong
+def draw_pipes(pipes):
+    for pipe in pipes:
+        # print(pipe.bottom)
+        if pipe.bottom > 400:
+            screen.blit(pipe_surface, pipe)
+        else:
+            pipe_flip = pygame.transform.flip(pipe_surface, False, True)
+            screen.blit(pipe_flip, pipe)
+
+
+# kiem tra va cham
+def check_collision(pipes):
+    for pipe in pipes:
+        if bird_rect.colliderect(pipe):
+            death_sound.play()
+            return False
+
+    if bird_rect.top <= 0 or bird_rect.bottom >= 500:
+        death_sound.play()
+        return False
+
+    return True
+
+# Ham xoay con chim
+def rotate_bird(bird):
+    new_bird = pygame.transform.rotozoom(bird, -bird_movement*6,1)
+    return  new_bird
+
+# Ham chuyen dong canh cua chim
+def bird_animation():
+    new_bird = bird_frames[bird_index]
+    new_bird_rect = new_bird.get_rect(center=(110,bird_rect.centery))
+    return  new_bird, new_bird_rect
+
+# chuyen dong nen dat
+def draw_floor():
+    screen.blit(floor_surface, (floor_x_pos, HEIGHT - 100))
+    screen.blit(floor_surface, (floor_x_pos + 300, HEIGHT - 100))
+
+# Ve con chim
+def draw_bird():
+    screen.blit(rotated_bird, bird_rect)
+
+# Hien thi diem
+def score_display(game_state):
+    if game_state == 'main_game':
+        score_surface = game_font.render(str(int(score)),True,(255,255,255))
+        score_rect = score_surface.get_rect(center=(200,50))
+        screen.blit(score_surface, score_rect)
+    elif game_state == 'game_over':
+        score_surface = game_font.render(f'Score : {int(score)}', True, (255, 255, 255))
+        score_rect = score_surface.get_rect(center=(200, 50))
+        screen.blit(score_surface, score_rect)
+
+        high_score_surface = game_font.render(f'Hight score : {int(high_score)}', True, (255, 255, 255))
+        high_score_rect = score_surface.get_rect(center=(155, 480))
+        screen.blit(high_score_surface, high_score_rect)
+
+# Cap nhat diem
+def update_score(score, high_score):
+    if score > high_score:
+        high_score = score
+    return high_score
+
 # Vong lap chinh cua game
 while True:
     # thiet lap thoat game
@@ -206,6 +214,10 @@ while True:
         # Hien thi diem
         score += 0.01
         score_display('main_game')
+        score_sound_countdown -= 1
+        if score_sound_countdown <= 0:
+            # score_sound.play()
+            score_sound_countdown = 100
     else:
         screen.blit(game_over_surface, game_over_rect)
         high_score = update_score(score,high_score)
