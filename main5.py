@@ -1,53 +1,5 @@
 import pygame, sys, random
 
-# khoi tao pygame
-pygame.init()
-
-# thong so cho khung canvas
-WIDTH, HEIGHT = 400, 600
-clock = pygame.time.Clock()
-gravity = 0.25
-# Trang thai cua game
-game_active = False
-
-# bien FPS
-FPS = 120
-
-# hien thi khung canvas
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-
-# anh cho background
-bg_surface = pygame.transform.scale(pygame.image.load('img/background-day.png').convert(), (WIDTH, HEIGHT))
-
-# anh cho phan nen
-floor_surface = pygame.image.load('img/base.png').convert()
-floor_surface = pygame.transform.scale2x(floor_surface)
-floor_x_pos = 0
-
-# con chim
-# Tao ba hinh anh trang thai cho chim khi bay
-bird_downflap = pygame.image.load('img/bluebird-downflap.png').convert_alpha()
-bird_midflap = pygame.image.load('img/bluebird-midflap.png').convert_alpha()
-bird_upflap = pygame.image.load('img/bluebird-upflap.png').convert_alpha()
-bird_frames = [bird_downflap, bird_midflap, bird_upflap]
-# chi so de xac dinh hinh dang chim
-bird_index = 1
-# tao dien mao cua chim dua tren viec chon trang thai khi bay
-bird_surface = bird_frames[bird_index]
-bird_rect = bird_surface.get_rect(center=(110, 200))
-bird_movement = 0
-# Tao mot su kien chim vo canh va dat thoi gian cho lan xuat hien (set_timer)
-VoCanh = pygame.USEREVENT + 1
-pygame.time.set_timer(VoCanh,100)
-
-
-# Ong
-pipe_surface = pygame.image.load('img/pipe-green.png').convert()
-# pipe_surface = pygame.transform.scale2x(pipe_serface)
-pipe_list = []
-XuatHien = pygame.USEREVENT
-pygame.time.set_timer(XuatHien, 1200)
-
 # Ham tao ong nuoc moi
 def creat_newpipe():
     pipe_height = [300, 200, 320]
@@ -90,6 +42,7 @@ def check_collision(pipes):
 def rotate_bird(bird):
     new_bird = pygame.transform.rotozoom(bird, -bird_movement*6,1)
     return  new_bird
+
 # Ham chuyen dong canh cua chim
 def bird_animation():
     new_bird = bird_frames[bird_index]
@@ -101,8 +54,89 @@ def draw_floor():
     screen.blit(floor_surface, (floor_x_pos, HEIGHT - 100))
     screen.blit(floor_surface, (floor_x_pos + 300, HEIGHT - 100))
 
+# Ve con chim
 def draw_bird():
     screen.blit(rotated_bird, bird_rect)
+
+# Hien thi diem
+def score_display(game_state):
+    if game_state == 'main_game':
+        score_surface = game_font.render(str(int(score)),True,(255,255,255))
+        score_rect = score_surface.get_rect(center=(200,50))
+        screen.blit(score_surface, score_rect)
+    elif game_state == 'game_over':
+        score_surface = game_font.render(f'Score : {int(score)}', True, (255, 255, 255))
+        score_rect = score_surface.get_rect(center=(200, 50))
+        screen.blit(score_surface, score_rect)
+
+        high_score_surface = game_font.render(f'Hight score : {int(high_score)}', True, (255, 255, 255))
+        high_score_rect = score_surface.get_rect(center=(155, 480))
+        screen.blit(high_score_surface, high_score_rect)
+
+# Cap nhat diem
+def update_score(score, high_score):
+    if score > high_score:
+        high_score = score
+    return high_score
+# khoi tao pygame
+pygame.init()
+
+# thong so cho khung canvas
+WIDTH, HEIGHT = 400, 600
+
+# font chu
+game_font = pygame.font.Font('04B_19.TTF',30)
+
+# thiet lap bien dong ho
+clock = pygame.time.Clock()
+
+# Thiet lap trong luc
+gravity = 0.25
+
+# Trang thai cua game
+game_active = False
+
+# bien FPS
+FPS = 120
+
+# hien thi khung canvas
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+
+# anh cho background
+bg_surface = pygame.transform.scale(pygame.image.load('img/background-day.png').convert(), (WIDTH, HEIGHT))
+
+# anh cho phan nen
+floor_surface = pygame.image.load('img/base.png').convert()
+floor_surface = pygame.transform.scale2x(floor_surface)
+floor_x_pos = 0
+
+# Diem
+score = 0
+high_score = 0
+# con chim
+# Tao ba hinh anh trang thai cho chim khi bay
+bird_downflap = pygame.image.load('img/bluebird-downflap.png').convert_alpha()
+bird_midflap = pygame.image.load('img/bluebird-midflap.png').convert_alpha()
+bird_upflap = pygame.image.load('img/bluebird-upflap.png').convert_alpha()
+bird_frames = [bird_downflap, bird_midflap, bird_upflap]
+# chi so de xac dinh hinh dang chim
+bird_index = 1
+# tao dien mao cua chim dua tren viec chon trang thai khi bay
+bird_surface = bird_frames[bird_index]
+bird_rect = bird_surface.get_rect(center=(110, 200))
+bird_movement = 0
+# Tao mot su kien chim vo canh va dat thoi gian cho lan xuat hien (set_timer)
+VoCanh = pygame.USEREVENT + 1
+pygame.time.set_timer(VoCanh,100)
+
+
+# Ong
+pipe_surface = pygame.image.load('img/pipe-green.png').convert()
+# pipe_surface = pygame.transform.scale2x(pipe_serface)
+pipe_list = []
+XuatHien = pygame.USEREVENT
+pygame.time.set_timer(XuatHien, 1200)
+
 
 # Vong lap chinh cua game
 while True:
@@ -117,6 +151,7 @@ while True:
                 bird_movement -= 5
             if event.key == pygame.K_SPACE and game_active == False:
                 game_active = True
+                score = 0
                 pipe_list.clear()
                 # Dat lai vi tri va toc do roi cho con chim
                 bird_rect = bird_surface.get_rect(center=(110, 200))
@@ -160,6 +195,12 @@ while True:
         pipe_list = move_pipes(pipe_list)
         draw_pipes(pipe_list)
 
+        # Hien thi diem
+        score += 0.01
+        score_display('main_game')
+    else:
+        high_score = update_score(score,high_score)
+        score_display('game_over')
     # hieu ung chuyen dong nen
     floor_x_pos -= 1
     draw_floor()
