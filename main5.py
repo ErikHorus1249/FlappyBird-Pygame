@@ -137,6 +137,9 @@ pipe_list = []
 XuatHien = pygame.USEREVENT
 pygame.time.set_timer(XuatHien, 1200)
 
+# game over
+game_over_surface = pygame.image.load('img/message.png').convert_alpha()
+game_over_rect = game_over_surface.get_rect(center=(200,250))
 
 # Vong lap chinh cua game
 while True:
@@ -199,6 +202,7 @@ while True:
         score += 0.01
         score_display('main_game')
     else:
+        screen.blit(game_over_surface, game_over_rect)
         high_score = update_score(score,high_score)
         score_display('game_over')
     # hieu ung chuyen dong nen
